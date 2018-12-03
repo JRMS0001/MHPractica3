@@ -45,6 +45,22 @@ void InputsFileReader::readInputsFromDataFile(std::string path) {
 
 		getline(myfile, line);
 		this->split(line, res, '=');
+		if (res.at(1) == "ELITE") {
+			technique = ELITE;
+		}
+		else if (res.at(1) == "TENPERCENT") {
+			technique = TENPERCENT;
+		}
+		else if (res.at(1) == "ALL")
+		{
+			technique = ALL;
+		}else{
+			std::cout << "WARNING: The crossover is not supported, only PMX and OX are";
+		}
+
+
+		getline(myfile, line);
+		this->split(line, res, '=');
 		std::string input = res.at(1);
 		this->split(input, res, ' ');
 		for (int i = 0; i < res.size(); i++) {
@@ -66,6 +82,10 @@ void InputsFileReader::readInputsFromDataFile(std::string path) {
 		getline(myfile, line);
 		this->split(line,res,'=');
 		generationsMax = stoi(res.at(1));
+
+		getline(myfile, line);
+		this->split(line,res,'=');
+		intensity = stoi(res.at(1));
 
 		getline(myfile, line);
 		this->split(line,res,'=');

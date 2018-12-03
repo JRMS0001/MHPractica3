@@ -19,7 +19,7 @@ Instance::~Instance() {
 
 /* STATIONARY ALGORITHM */
 
-int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile ){
+int* Instance::AGE(InputsFileReader *ifl, int * cost , std::ofstream &outfile ){
 	int** flowMatrix = matricesFileReader->getFlowMatrix();
 	int** distanceMatrix = matricesFileReader->getDistanceMatrix();
 
@@ -45,9 +45,9 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 	outfile << "Best cost of the initial population: " << population.at(0).cost << std::endl;
 
 
-	int it=1;
-	while(it < 50000){
-	outfile << "Iteration n°" << it << std::endl;
+	int generation=1;
+	while(generation < 50000){
+	outfile << "Generation n°" << generation << std::endl;
 
 		/* SELECTION */
 
@@ -107,11 +107,11 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 			}
 
 			// Crossover
-			if (crossoverType == PMX) {
+			if (ifl->crossover == PMX) {
 				solutionSon1 = PMXCrossover(firstFather.solution, secondFather.solution, intervalBegining, intervalEnd);
 				solutionSon2 = PMXCrossover(secondFather.solution, firstFather.solution, intervalBegining, intervalEnd);
 			}
-			else if (crossoverType == OX) {
+			else if (ifl->crossover == OX) {
 				solutionSon1 = OXCrossover(firstFather.solution, secondFather.solution, intervalBegining, intervalEnd);
 				solutionSon2 = OXCrossover(secondFather.solution, firstFather.solution, intervalBegining, intervalEnd);
 			}
@@ -122,10 +122,8 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 
 			firstSon.solution = solutionSon1;
 			firstSon.cost = evaluateSolution(solutionSon1);
-			it++;
 			secondSon.solution = solutionSon2;
 			secondSon.cost = evaluateSolution(solutionSon2);
-			it++;
 		}
 		else {
 			firstSon = firstFather;
@@ -146,8 +144,7 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 				firstSon.solution[random] = swap;
 				//Factorization
 				firstSon.cost = evaluateSolution(firstSon.solution);
-				it++;
-			}
+				}
 		}
 
 		for (int gen = 0; gen < matrixSize; gen++) {
@@ -160,10 +157,15 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 				secondSon.solution[random] = swap;
 				//Factorization
 				secondSon.cost = evaluateSolution(secondSon.solution);
-				it++;
+
 			}
 		}
 
+		/*MEMETIC PART OF THE ALGORITHM*/
+		if(generation % 50 == 0){
+			firstSon.solution=bestFirst(&firstSon.cost,firstSon.solution, ifl->intensity, outfile);
+			secondSon.solution=bestFirst(&secondSon.cost,firstSon.solution, ifl->intensity, outfile);;
+		}
 
 
 		/* REPLACEMENT */
@@ -188,6 +190,7 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 		displayPopulationCosts(population, outfile);
 		outfile << "Best solution's cost : " << population.at(0).cost << std::endl;
 		outfile << std::endl;
+		generation++;
 	}
 
 	/* RETURN */
@@ -203,7 +206,7 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 
 /* GENERATIONAL ALGORITHM */
 
-int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile ) {
+int* Instance::AGG(InputsFileReader *ifl, int * cost , std::ofstream &outfile ) {
 	int** flowMatrix = matricesFileReader->getFlowMatrix();
 	int** distanceMatrix = matricesFileReader->getDistanceMatrix();
 
@@ -229,9 +232,9 @@ int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 	outfile << "Best cost of the initial population: " << population.at(0).cost << std::endl;
 
 
-	int it = 1;
-	while (it < 50000) {
-		outfile << "Iteration n°" << it << std::endl;
+	int generation = 1;
+	while (generation < 50000) {
+		outfile << "Generation n°" << generation << std::endl;
 
 		/* SELECTION */
 		std::sort(population.begin(), population.end(), &compareElements);
@@ -292,11 +295,11 @@ int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 				}
 
 				// Crossover
-				if (crossoverType == PMX) {
+				if (ifl->crossover == PMX) {
 					solutionSon1 = PMXCrossover(population.at(i).solution, population.at(i + 1).solution, intervalBegining, intervalEnd);
 					solutionSon2 = PMXCrossover(population.at(i + 1).solution, population.at(i).solution, intervalBegining, intervalEnd);
 				}
-				else if (crossoverType == OX) {
+				else if (ifl->crossover == OX) {
 					solutionSon1 = OXCrossover(population.at(i).solution, population.at(i + 1).solution, intervalBegining, intervalEnd);
 					solutionSon2 = OXCrossover(population.at(i + 1).solution, population.at(i).solution, intervalBegining, intervalEnd);
 				}
@@ -307,10 +310,8 @@ int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 				
 				firstSon.solution = solutionSon1;
 				firstSon.cost = evaluateSolution(solutionSon1);
-				it++;
 				secondSon.solution = solutionSon2;
 				secondSon.cost = evaluateSolution(solutionSon2);
-				it++;
 			}
 			else {
 				firstSon = population.at(i);
@@ -338,8 +339,37 @@ int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 					population.at(i).solution[random] = swap;
 					//Factorization
 					population.at(i).cost = evaluateSolution(population.at(i).solution);
-					it++;
 				}
+			}
+		}
+
+		/* MEMETIC PART OF THE ALGORITHM*/
+		if (generation % 10 ==0){
+			if (ifl->technique == ELITE){
+				std::sort(population.begin(), population.end(), &compareElements);
+
+				population.at(0).solution = bestFirst(&population.at(0).cost, population.at(0).solution, ifl->intensity, outfile);
+				population.at(1).solution = bestFirst(&population.at(1).cost, population.at(1).solution, ifl->intensity, outfile);
+				population.at(2).solution = bestFirst(&population.at(2).cost, population.at(2).solution, ifl->intensity, outfile);
+
+			}else if (ifl->technique == TENPERCENT)
+			{
+				int r;
+				int memeticSize=ifl->populationSize * 10 / 100;
+				std::vector<int> alreadySearched;
+				for (int i = 0; i < memeticSize; ++i){
+					r = rand() % ifl->populationSize;
+					while(checkAlreadySearched(alreadySearched,r))
+						r = rand() % ifl->populationSize;
+					population.at(r).solution = bestFirst(&population.at(r).cost, population.at(r).solution, ifl->intensity, outfile);
+					alreadySearched.push_back(r);
+				}
+			}else if (ifl->technique == ALL){
+				for (int i = 0; i < population.size(); ++i){
+					population.at(i).solution = bestFirst(&population.at(i).cost, population.at(i).solution, ifl->intensity, outfile);
+				}
+			}else{
+				std::cout << "Not supported technique, only ELITE, TENPERCENT and ALL are supported" << std::endl ;
 			}
 		}
 
@@ -384,7 +414,7 @@ int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 		outfile << "Best solution's cost : " << population.at(0).cost << std::endl;
 		outfile << std::endl;
 
-		it++;
+		generation++;
 	}
 
 
@@ -397,7 +427,106 @@ int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 
 
 
+int * Instance::bestFirst(int * cost , int* initialSolution ,int intensity,std::ofstream &outfile){
+	int costDiff,swap;
+	//*cost=0;
+	int * DLB= new int[matrixSize];
+	bool improve_flag;
+	for(int i=0;i<matrixSize;i++){
+		DLB[i]=0;
+	}
 
+	int* unitAndLocationAssociation = new int[matrixSize];
+	unitAndLocationAssociation = initialSolution;
+	/*/*First random solution*/
+	/*for(int i=0; i<matrixSize; i++){
+
+		unitAndLocationAssociation[i]= i+1;
+	}
+	random_shuffle(&unitAndLocationAssociation[0],&unitAndLocationAssociation[matrixSize]);
+	//Calculation of the cost of the generated solution
+	for(int i=0;i<matrixSize;i++){
+		for(int j=0;j<matrixSize;j++){
+			if(i!=j)
+				*cost+=flowMatrix[i][j] * distanceMatrix[unitAndLocationAssociation[i]-1][unitAndLocationAssociation[j]-1];
+		}
+	}*/
+	outfile << "Initial solution cost: " << *cost << std::endl;
+	//Main loop
+	int it = 0;
+	while(it<intensity && checkDLB(DLB)){
+		for(int i=0; i<matrixSize;i++){
+			if(DLB[i]==0){
+				improve_flag=false;
+				for (int j=0;j<matrixSize; j++){
+					if(j!=i && DLB[j]==0){
+						costDiff = checkMove(unitAndLocationAssociation,i,j);
+						it++;
+						if(costDiff<0){
+							//Making the change effective
+							swap = unitAndLocationAssociation[i];
+							unitAndLocationAssociation[i] = unitAndLocationAssociation[j];
+							unitAndLocationAssociation[j] = swap;
+							*cost+=costDiff;
+
+							DLB[i]=0;
+							DLB[j]=0;
+							improve_flag=true;
+
+							outfile << "Movement in iteration: " << it << ", new cost: " << *cost << std::endl;
+						}
+					}
+				}
+				if (!improve_flag)
+					DLB[i]=1;
+			}
+		}
+	}
+	if(it>50000)
+		outfile << "Loop ended because of iteration number" << std::endl;
+	else
+		outfile << "Loop ended because of DLB"<< std::endl;
+
+	//Display solution and cost
+		outfile << "Solution: ";
+		for(int i=0; i< matrixSize; i++){
+			outfile << unitAndLocationAssociation[i] << " ";
+		}
+		outfile << "cost: "<< *cost << std::endl;
+		
+	return unitAndLocationAssociation;
+}
+
+bool Instance::checkAlreadySearched(std::vector<int> alreadySearched, int number){
+	for (int element: alreadySearched){
+		if(number == element)
+			return true;		
+	}
+	return false;
+}
+
+bool Instance::checkDLB(int * DLB){
+	for(int i=0;i<matrixSize;i++){
+		if(DLB[i]==0)
+			return true;
+	}
+	return false;
+}
+
+int Instance::checkMove(int * sol, int i, int j){
+	int** flowMatrix = matricesFileReader->getFlowMatrix();
+	int** distanceMatrix = matricesFileReader->getDistanceMatrix();
+	int cost=0;
+	for(int k=0;k<matrixSize;k++){
+		if(k!=i && k!=j){
+			cost+=flowMatrix[i][k] * (distanceMatrix[sol[j]-1][sol[k]-1] - distanceMatrix[sol[i]-1][sol[k]-1]);
+			cost+=flowMatrix[j][k] * (distanceMatrix[sol[i]-1][sol[k]-1] - distanceMatrix[sol[j]-1][sol[k]-1]);
+			cost+=flowMatrix[k][i] * (distanceMatrix[sol[k]-1][sol[j]-1] - distanceMatrix[sol[k]-1][sol[i]-1]);
+			cost+=flowMatrix[k][j] * (distanceMatrix[sol[k]-1][sol[i]-1] - distanceMatrix[sol[k]-1][sol[j]-1]);
+		}
+	}
+	return cost;
+}
 
 
 /* USEFUL FUNCTIONS */
