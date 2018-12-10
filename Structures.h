@@ -14,9 +14,3 @@ enum CROSSOVER {
 	PMX,
 	OX
 };
-
-enum TECHNIQUE {
-	ELITE,
-	TENPERCENT,
-	ALL
-};

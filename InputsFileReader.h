@@ -15,12 +15,10 @@ public:
 
 	ALGORITHM algorithm;
 	CROSSOVER crossover;
-	TECHNIQUE technique;
 	std::vector<std::string> inputs;
 	std::vector<int> seeds;
 	int populationSize;
-	int intensity;
-	int generationsMax;
+	std::vector<int> iterationsBL;
 	float probabilityCrossover;
 	float probabilityMutation;
 	int eliteNumber;

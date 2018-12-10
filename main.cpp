@@ -11,11 +11,6 @@
 int main(int argc,const char * argv[]) {
 
 
-	// Create the logs folder if it doesn't exist
-	std::string OutputFolder = "logs";
-
-
-
 	// Run the algorithm
 	InputsFileReader *ifl= new InputsFileReader();
 
@@ -41,7 +36,7 @@ int main(int argc,const char * argv[]) {
 				else
 					stationaryOutfile.open("logs/" + input + "_AGEPMX_" + std::to_string(seed) + ".log");
 				const clock_t stationary_begin_time = clock();
-				instance->AGE(ifl, &stationaryCost, stationaryOutfile);
+				instance->AGE(ifl->crossover, &stationaryCost, stationaryOutfile);
 				std::cout << "Stationary execution time: " << float(clock() - stationary_begin_time) / CLOCKS_PER_SEC << std::endl;
 				std::cout << "Stationary cost: " << stationaryCost << std::endl;
 				stationaryOutfile.close();
@@ -53,11 +48,11 @@ int main(int argc,const char * argv[]) {
 				int generationalCost = 0;
 				std::ofstream generationalOutfile;
 				if(ifl->crossover == OX)
-					generationalOutfile.open("logs/" + input + "_AGGOX_" + std::to_string(seed) + ".log");
+					generationalOutfile.open("logs/" + input + "_AGEOX_" + std::to_string(seed) + ".log");
 				else
-					generationalOutfile.open("logs/" + input + "_AGGPMX_" + std::to_string(seed) + ".log");
+					generationalOutfile.open("logs/" + input + "_AGEPMX_" + std::to_string(seed) + ".log");
 				const clock_t generational_begin_time = clock();
-				instance->AGG(ifl, &generationalCost, generationalOutfile);
+				instance->AGG(ifl->crossover, &generationalCost, generationalOutfile);
 				std::cout << "Generational execution time: " << float(clock() - generational_begin_time) / CLOCKS_PER_SEC << std::endl;
 				std::cout << "Generational cost: " << generationalCost << std::endl;
 				generationalOutfile.close();
