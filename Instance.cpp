@@ -46,8 +46,8 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 
 	int generation = 1;
 	int it=1;
-	while(it < 50000){
-	outfile << "Iteration n°" << it << std::endl;
+	while(generation < 1000){
+	outfile << "Generation nï¿½" << generation << std::endl;
 
 		/* SELECTION */
 
@@ -122,10 +122,10 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 
 			firstSon.solution = solutionSon1;
 			firstSon.cost = evaluateSolution(solutionSon1);
-			it++;
+			//it++;
 			secondSon.solution = solutionSon2;
 			secondSon.cost = evaluateSolution(solutionSon2);
-			it++;
+			//it++;
 		}
 		else {
 			firstSon = firstFather;
@@ -146,7 +146,7 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 				firstSon.solution[random] = swap;
 				//Factorization
 				firstSon.cost = evaluateSolution(firstSon.solution);
-				it++;
+				//it++;
 			}
 		}
 
@@ -160,7 +160,7 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 				secondSon.solution[random] = swap;
 				//Factorization
 				secondSon.cost = evaluateSolution(secondSon.solution);
-				it++;
+				//it++;
 			}
 		}
 
@@ -241,8 +241,8 @@ int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 
 	int generation = 1;
 	int it = 1;
-	while (it < 50000) {
-		outfile << "Iteration n°" << it << std::endl;
+	while (generation < 1000) {
+		outfile << "Generation nï¿½" << generation << std::endl;
 
 		/* SELECTION */
 		std::sort(population.begin(), population.end(), &compareElements);

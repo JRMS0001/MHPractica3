@@ -48,9 +48,9 @@ int main(int argc,const char * argv[]) {
 				int generationalCost = 0;
 				std::ofstream generationalOutfile;
 				if(ifl->crossover == OX)
-					generationalOutfile.open("logs/" + input + "_AGEOX_" + std::to_string(seed) + ".log");
+					generationalOutfile.open("logs/" + input + "_AGGOX_" + std::to_string(seed) + ".log");
 				else
-					generationalOutfile.open("logs/" + input + "_AGEPMX_" + std::to_string(seed) + ".log");
+					generationalOutfile.open("logs/" + input + "_AGGPMX_" + std::to_string(seed) + ".log");
 				const clock_t generational_begin_time = clock();
 				instance->AGG(ifl->crossover, &generationalCost, generationalOutfile);
 				std::cout << "Generational execution time: " << float(clock() - generational_begin_time) / CLOCKS_PER_SEC << std::endl;
