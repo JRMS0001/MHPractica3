@@ -28,6 +28,7 @@ private:
 	void bestFirst(Element & individual, int iterationBL, std::ofstream &outfile);
 	bool checkDLB(int * DLB);
 	int calculateCostDiff(int * sol, int i, int j);
+	bool checkAlreadySearched(std::vector<int> alreadySearched, int number);
 
 public:
 	Instance(std::string path);

@@ -44,7 +44,7 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 	std::sort(population.begin(),population.end(), &compareElements);
 	outfile << "Best cost of the initial population: " << population.at(0).cost << std::endl;
 
-
+	int generation = 1;
 	int it=1;
 	while(it < 50000){
 	outfile << "Iteration n°" << it << std::endl;
@@ -166,6 +166,15 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 
 
 
+		/*MEMETIC PART OF THE ALGORITHM*/
+		if (generation % 50 == 0) {
+			std::cout << "Memetic part" << std::endl;
+			bestFirst(firstSon, inputsFileReader->iterationsBL, outfile);
+			bestFirst(secondSon, inputsFileReader->iterationsBL, outfile);
+		}
+
+
+
 		/* REPLACEMENT */
 		std::sort(population.begin(),population.end(), &compareElements);
 
@@ -188,6 +197,8 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 		displayPopulationCosts(population, outfile);
 		outfile << "Best solution's cost : " << population.at(0).cost << std::endl;
 		outfile << std::endl;
+
+		generation++;
 	}
 
 	/* RETURN */
@@ -348,13 +359,43 @@ int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 		/* MEMETIC PART OF THE ALGORITHM*/
 		if (generation % 10 == 0) {
 			std::cout << "Memetic part" << std::endl;
-			std::cout << "Generation number: " << generation << std::endl;
-			std::sort(population.begin(), population.end(), &compareElements);
+			int bestFirstInterations = inputsFileReader->iterationsBL;
 
-			bestFirst(population.at(0), 100, outfile);
-			bestFirst(population.at(1), 100, outfile);
-			bestFirst(population.at(2), 100, outfile);
+			//switch initializations
+			std::vector<int> alreadySearched;
+			int memeticSize = inputsFileReader->populationSize * 10 / 100;
+
+			switch(inputsFileReader->techniqueBL)
+			{
+			case ELITE:
+				std::sort(population.begin(), population.end(), &compareElements);
+				bestFirst(population.at(0), bestFirstInterations, outfile);
+				bestFirst(population.at(1), bestFirstInterations, outfile);
+				bestFirst(population.at(2), bestFirstInterations, outfile);
+				break;
+			case TENPERCENT:
+				int r;
+				for (int i = 0; i < memeticSize; ++i) {
+					r = rand() % inputsFileReader->populationSize;
+					while (checkAlreadySearched(alreadySearched, r))
+						r = rand() % inputsFileReader->populationSize;
+					bestFirst(population.at(r), bestFirstInterations, outfile);
+					alreadySearched.push_back(r);
+				}
+				break;
+			case ALL:
+				for (int i = 0; i < population.size(); ++i) {
+					bestFirst(population.at(i), bestFirstInterations, outfile);
+				}
+				break;
+			default:
+				std::cout << "Not supported technique, only ELITE, TENPERCENT and ALL are supported" << std::endl;
+				break;
+			}
+
 		}
+
+
 			
 
 
@@ -722,4 +763,12 @@ int Instance::calculateCostDiff(int * sol, int i, int j) {
 		}
 	}
 	return cost;
+}
+
+bool Instance::checkAlreadySearched(std::vector<int> alreadySearched, int number) {
+	for (int element : alreadySearched) {
+		if (number == element)
+			return true;
+	}
+	return false;
 }

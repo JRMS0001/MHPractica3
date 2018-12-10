@@ -18,7 +18,8 @@ public:
 	std::vector<std::string> inputs;
 	std::vector<int> seeds;
 	int populationSize;
-	std::vector<int> iterationsBL;
+	TECHNIQUE_BL techniqueBL;
+	int iterationsBL;
 	float probabilityCrossover;
 	float probabilityMutation;
 	int eliteNumber;

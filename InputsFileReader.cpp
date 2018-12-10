@@ -65,11 +65,32 @@ void InputsFileReader::readInputsFromDataFile(std::string path) {
 
 		getline(myfile, line);
 		this->split(line, res, '=');
+		if (res.at(1) == "ELITE") {
+			techniqueBL = ELITE;
+		}
+		else if (res.at(1) == "TENPERCENT") {
+			techniqueBL = TENPERCENT;
+		}
+		else if (res.at(1) == "ALL") {
+			techniqueBL = ALL;
+		}
+		else {
+			std::cout << "WARNING: The BL techinque is not supported, only ELITE, TENPERCENT and ALL are";
+		}
+
+		getline(myfile, line);
+		this->split(line, res, '=');
+		iterationsBL = stoi(res.at(1));
+
+		/*
+		getline(myfile, line);
+		this->split(line, res, '=');
 		std::string input_iterationsBL = res.at(1);
 		this->split(input_iterationsBL, res, ' ');
 		for (int i = 0; i < res.size(); i++) {
 			iterationsBL.push_back(stoi(res.at(i)));
 		}
+		*/
 
 		getline(myfile, line);
 		this->split(line,res,'=');

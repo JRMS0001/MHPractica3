@@ -14,3 +14,9 @@ enum CROSSOVER {
 	PMX,
 	OX
 };
+
+enum TECHNIQUE_BL {
+	ELITE,
+	TENPERCENT,
+	ALL
+};
