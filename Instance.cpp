@@ -20,8 +20,8 @@ Instance::~Instance() {
 /* STATIONARY ALGORITHM */
 
 int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile ){
-	int** flowMatrix = matricesFileReader->getFlowMatrix();
-	int** distanceMatrix = matricesFileReader->getDistanceMatrix();
+	//int** flowMatrix = matricesFileReader->getFlowMatrix();
+	//int** distanceMatrix = matricesFileReader->getDistanceMatrix();
 
 	std::vector<Element> population;
 
@@ -45,9 +45,9 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 	outfile << "Best cost of the initial population: " << population.at(0).cost << std::endl;
 
 	int generation = 1;
-	int it=1;
-	while(it < 50000){
-	outfile << "Iteration n°" << it << std::endl;
+	//int it=1;
+	while(generation < 1000){
+	outfile << "Generation nÂº" << generation << std::endl;
 
 		/* SELECTION */
 
@@ -122,10 +122,10 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 
 			firstSon.solution = solutionSon1;
 			firstSon.cost = evaluateSolution(solutionSon1);
-			it++;
+			//it++;
 			secondSon.solution = solutionSon2;
 			secondSon.cost = evaluateSolution(solutionSon2);
-			it++;
+			//it++;
 		}
 		else {
 			firstSon = firstFather;
@@ -146,7 +146,7 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 				firstSon.solution[random] = swap;
 				//Factorization
 				firstSon.cost = evaluateSolution(firstSon.solution);
-				it++;
+				//it++;
 			}
 		}
 
@@ -160,7 +160,7 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 				secondSon.solution[random] = swap;
 				//Factorization
 				secondSon.cost = evaluateSolution(secondSon.solution);
-				it++;
+				//it++;
 			}
 		}
 
@@ -215,8 +215,8 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 /* GENERATIONAL ALGORITHM */
 
 int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile ) {
-	int** flowMatrix = matricesFileReader->getFlowMatrix();
-	int** distanceMatrix = matricesFileReader->getDistanceMatrix();
+	//int** flowMatrix = matricesFileReader->getFlowMatrix();
+	//int** distanceMatrix = matricesFileReader->getDistanceMatrix();
 
 	std::vector<Element> population;
 
@@ -240,9 +240,9 @@ int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 	outfile << "Best cost of the initial population: " << population.at(0).cost << std::endl;
 
 	int generation = 1;
-	int it = 1;
-	while (it < 50000) {
-		outfile << "Iteration n°" << it << std::endl;
+	//int it = 1;
+	while (generation < 1000) {
+		outfile << "Generation nï¿½" << generation << std::endl;
 
 		/* SELECTION */
 		std::sort(population.begin(), population.end(), &compareElements);
@@ -280,7 +280,7 @@ int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 		}
 		else {
 			loopEnding = popSize - 1;
-			lastIndividual = population.at(matrixSize-1);
+			lastIndividual = population.at(popSize-1);
 		}
 
 		for (int i = 0; i < loopEnding; i+=2) {
@@ -330,10 +330,10 @@ int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 				
 				firstSon.solution = solutionSon1;
 				firstSon.cost = evaluateSolution(solutionSon1);
-				it++;
+				//it++;
 				secondSon.solution = solutionSon2;
 				secondSon.cost = evaluateSolution(solutionSon2);
-				it++;
+				//it++;
 			}
 			else {
 				firstSon = population.at(i);
@@ -368,7 +368,7 @@ int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 					population.at(i).solution[random] = swap;
 					//Factorization
 					population.at(i).cost = evaluateSolution(population.at(i).solution);
-					it++;
+				//	it++;
 				}
 			}
 		}
@@ -403,7 +403,7 @@ int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 				}
 				break;
 			case ALL:
-				for (int i = 0; i < population.size(); ++i) {
+				for (unsigned int i = 0; i < population.size(); ++i) {
 					bestFirst(population.at(i), bestFirstInterations, outfile);
 				}
 				break;
