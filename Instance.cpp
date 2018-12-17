@@ -700,19 +700,33 @@ void Instance::bestFirst(Element & individual, int iterationBL, std::ofstream &o
 	//Main loop
 	int it = 0;
 	while (it < iterationBL && checkDLB(DLB)) {
-		for (int i = 0; i < matrixSize; i++) {
+		for (int i = 0; i < matrixSize && it < iterationBL; i++) {
 			if (DLB[i] == 0) {
 				improve_flag = false;
-				for (int j = 0; j < matrixSize; j++) {
+				for (int j = 0; j < matrixSize && it < iterationBL; j++) {
 					if (j != i && DLB[j] == 0) {
-						costDiff = calculateCostDiff(individual.solution, i, j);
+
+						// Create new solution
+						Element newIndividual = individual;
+						swapValue = newIndividual.solution[i];
+						newIndividual.solution[i] = newIndividual.solution[j];
+						newIndividual.solution[j] = swapValue;
+
+						// Evaluate new solution
+						newIndividual.cost = evaluateSolution(newIndividual.solution);
 						it++;
+
+						// Calculate costDiff
+						costDiff = individual.cost - newIndividual.cost;
+						//costDiff = calculateCostDiff(individual.solution, i, j);
+
 						if (costDiff < 0) {
 							//Making the change effective
-							swapValue = individual.solution[i];
-							individual.solution[i] = individual.solution[j];
-							individual.solution[j] = swapValue;
-							individual.cost += costDiff;
+							individual = newIndividual;
+							if (individual.cost < 0) {
+								std::cout << "WRONG COST!" << std::endl;
+								std::cout << individual.cost << std::endl;
+							}
 
 							DLB[i] = 0;
 							DLB[j] = 0;
