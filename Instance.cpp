@@ -46,8 +46,8 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 
 	int generation = 1;
 	int it=1;
-	while(generation < 1000){
-	outfile << "Generation nï¿½" << generation << std::endl;
+	while(it < 50000){
+	outfile << "Iteration n°" << it << std::endl;
 
 		/* SELECTION */
 
@@ -122,10 +122,10 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 
 			firstSon.solution = solutionSon1;
 			firstSon.cost = evaluateSolution(solutionSon1);
-			//it++;
+			it++;
 			secondSon.solution = solutionSon2;
 			secondSon.cost = evaluateSolution(solutionSon2);
-			//it++;
+			it++;
 		}
 		else {
 			firstSon = firstFather;
@@ -146,7 +146,7 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 				firstSon.solution[random] = swap;
 				//Factorization
 				firstSon.cost = evaluateSolution(firstSon.solution);
-				//it++;
+				it++;
 			}
 		}
 
@@ -160,7 +160,7 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 				secondSon.solution[random] = swap;
 				//Factorization
 				secondSon.cost = evaluateSolution(secondSon.solution);
-				//it++;
+				it++;
 			}
 		}
 
@@ -241,8 +241,8 @@ int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 
 	int generation = 1;
 	int it = 1;
-	while (generation < 1000) {
-		outfile << "Generation nï¿½" << generation << std::endl;
+	while (it < 50000) {
+		outfile << "Iteration n°" << it << std::endl;
 
 		/* SELECTION */
 		std::sort(population.begin(), population.end(), &compareElements);
@@ -271,7 +271,19 @@ int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 
 		std::vector<Element> crossoveredPopulation;
 
-		for (int i = 0; i < inputsFileReader->populationSize; i+=2) {
+		int loopEnding = 0;
+		int popSize = inputsFileReader->populationSize;
+
+		Element lastIndividual;
+		if (popSize % 2 == 0) {
+			loopEnding = popSize;
+		}
+		else {
+			loopEnding = popSize - 1;
+			lastIndividual = population.at(matrixSize-1);
+		}
+
+		for (int i = 0; i < loopEnding; i+=2) {
 
 			Element firstSon;
 			Element secondSon;
@@ -332,7 +344,14 @@ int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 			crossoveredPopulation.push_back(secondSon);
 
 		}
+
+		if (popSize % 2 != 0) {
+			crossoveredPopulation.push_back(lastIndividual);
+		}
+
 		population = crossoveredPopulation;
+
+		
 
 
 
@@ -741,7 +760,7 @@ void Instance::bestFirst(Element & individual, int iterationBL, std::ofstream &o
 			}
 		}
 	}
-	if (it > iterationBL)
+	if (it >= iterationBL)
 		outfile << "Loop ended because of iteration number" << std::endl;
 	else
 		outfile << "Loop ended because of DLB" << std::endl;
