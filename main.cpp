@@ -47,10 +47,22 @@ int main(int argc,const char * argv[]) {
 				std::cout << "Executing Generational algorithm." << std::endl;
 				int generationalCost = 0;
 				std::ofstream generationalOutfile;
-				if(ifl->crossover == OX)
-					generationalOutfile.open("logs/" + input + "_AGGOX_" + std::to_string(seed) + ".log");
-				else
-					generationalOutfile.open("logs/" + input + "_AGGPMX_" + std::to_string(seed) + ".log");
+				if(ifl->crossover == OX && ifl->techniqueBL == ALL)
+					generationalOutfile.open("logs/" + input + "_AGGOX_ALL_" + std::to_string(seed) + ".log");
+				else if(ifl->crossover == OX && ifl->techniqueBL == TENPERCENT)
+					generationalOutfile.open("logs/" + input + "_AGGOX_TENPERCENT_" + std::to_string(seed) + ".log");
+				else if(ifl->crossover == OX && ifl->techniqueBL == ELITE)
+					generationalOutfile.open("logs/" + input + "_AGGOX_ELITE_" + std::to_string(seed) + ".log");
+				else if(ifl->crossover == PMX && ifl->techniqueBL == ALL)
+					generationalOutfile.open("logs/" + input + "_AGGPMX_ALL_" + std::to_string(seed) + ".log");
+				else if(ifl->crossover == PMX && ifl->techniqueBL == TENPERCENT)
+					generationalOutfile.open("logs/" + input + "_AGGPMX_TENPERCENT_" + std::to_string(seed) + ".log");
+				else if(ifl->crossover == PMX && ifl->techniqueBL == ELITE)
+					generationalOutfile.open("logs/" + input + "_AGGPMX_ELITE_" + std::to_string(seed) + ".log");
+				else{
+					std::cout << "WARNING! Crossover or technique not supported, check the user manual." << std::endl;
+				}
+
 				const clock_t generational_begin_time = clock();
 				instance->AGG(ifl->crossover, &generationalCost, generationalOutfile);
 				std::cout << "Generational execution time: " << float(clock() - generational_begin_time) / CLOCKS_PER_SEC << std::endl;
@@ -62,5 +74,5 @@ int main(int argc,const char * argv[]) {
 
 	std::cout << "Execution over." << std::endl;
 
-	system("pause");
+	//system("pause");
 }

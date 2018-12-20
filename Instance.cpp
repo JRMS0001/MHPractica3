@@ -168,7 +168,7 @@ int* Instance::AGE(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 
 		/*MEMETIC PART OF THE ALGORITHM*/
 		if (generation % 50 == 0) {
-			std::cout << "Memetic part" << std::endl;
+			//std::cout << "Memetic part" << std::endl;
 			bestFirst(firstSon, inputsFileReader->iterationsBL, outfile);
 			bestFirst(secondSon, inputsFileReader->iterationsBL, outfile);
 		}
@@ -377,7 +377,7 @@ int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 
 		/* MEMETIC PART OF THE ALGORITHM*/
 		if (generation % 10 == 0) {
-			std::cout << "Memetic part" << std::endl;
+			//std::cout << "Memetic part" << std::endl;
 			int bestFirstInterations = inputsFileReader->iterationsBL;
 
 			//switch initializations
@@ -413,11 +413,6 @@ int* Instance::AGG(CROSSOVER crossoverType, int * cost , std::ofstream &outfile 
 			}
 
 		}
-
-
-			
-
-
 
 		/* REPLACEMENT */
 
@@ -736,7 +731,7 @@ void Instance::bestFirst(Element & individual, int iterationBL, std::ofstream &o
 						it++;
 
 						// Calculate costDiff
-						costDiff = individual.cost - newIndividual.cost;
+						costDiff = newIndividual.cost - individual.cost ;
 						//costDiff = calculateCostDiff(individual.solution, i, j);
 
 						if (costDiff < 0) {
@@ -771,7 +766,7 @@ void Instance::bestFirst(Element & individual, int iterationBL, std::ofstream &o
 		outfile << individual.solution[i] << " ";
 	}
 	outfile << "cost: " << individual.cost << std::endl;
-	std::cout << "Best First cost: " << individual.cost << std::endl;
+	//std::cout << "Best First cost: " << individual.cost << std::endl;
 }
 
 bool Instance::checkDLB(int * DLB) {
